@@ -10,7 +10,6 @@ import { Recipe } from '../recipe.model';
   styleUrls: ['./recipe-list.component.css']
 })
 export class RecipeListComponent implements OnInit{
-  // @Output() selectRecipe = new EventEmitter<Recipe>;
 
   recipes: Recipe[];
 
@@ -20,11 +19,6 @@ export class RecipeListComponent implements OnInit{
 
   ngOnInit(): void {
     this.recipes = this.recipesService.getRecipesList();
-  }
-
-  onSelectRecipe(recipe: Recipe){
-    this.recipesService.recipeSelected.emit(recipe);
-  }
-  
+  } 
 
 }
