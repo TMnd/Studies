@@ -1,1 +1,7 @@
 /node_modules
+.angular
+.editorconfig
+angular.json
+*e2e**
+*node_modules**
+.DS_Store
