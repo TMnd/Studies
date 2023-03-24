@@ -1,29 +1,40 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
-import { Post } from './post.mode';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PostService } from './posts.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   loadedPosts = [];
   isFetchingPosts = false;
+  error = null;
+  private errorSub: Subscription;
 
   constructor(
-    private http: HttpClient, 
     private postsService: PostService
   ) {}
 
+  ngOnDestroy(): void {
+    this.errorSub.unsubscribe();
+  }
+
   ngOnInit() {
+    this.errorSub = this.postsService.error.subscribe(errorMessage => {
+      this.error = errorMessage;
+    })
+
     this.postsService.fetchPosts()
-    .subscribe(postsArray => {
-        this.isFetchingPosts = false;
-        this.loadedPosts = postsArray;
-    });;
+    .subscribe({
+        next: (postsArray) => {
+          this.isFetchingPosts = false;
+          this.loadedPosts = postsArray;
+        },
+        error: (error) => this.error=error.message
+        //complete: () => console.info('complete') 
+    });
   }
 
   onCreatePost(postData: { title: string; content: string }) {
@@ -35,9 +46,17 @@ export class AppComponent implements OnInit {
     // Send Http request
     this.isFetchingPosts = true;
     this.postsService.fetchPosts()
-    .subscribe(postsArray => {
+    .subscribe({
+      next: (postsArray) => {
         this.isFetchingPosts = false;
         this.loadedPosts = postsArray;
+      },
+      error: (error) => {
+        this.isFetchingPosts = false;
+        this.error = error.message;
+        console.log(error);
+      }
+      //complete: () => console.info('complete') 
     });
   }
 
@@ -48,5 +67,9 @@ export class AppComponent implements OnInit {
       this.isFetchingPosts = false;
       this.loadedPosts = [];
     });
+  }
+
+  onHandleError() {
+    this.error=null;
   }
 }
