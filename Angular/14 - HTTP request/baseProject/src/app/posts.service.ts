@@ -1,7 +1,7 @@
-import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
+import { HttpClient, HttpEventType, HttpHeaders, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Subject, throwError } from "rxjs";
-import { catchError, map } from "rxjs/operators";
+import { catchError, map, tap } from "rxjs/operators";
 import { Post } from "./post.mode";
 
 @Injectable({providedIn: 'root'})
@@ -18,9 +18,15 @@ export class PostService{
         this.http
         .post<{name: string}>(
             'https://angularstudy-bdaae-default-rtdb.europe-west1.firebasedatabase.app/posts.json', 
-            postData
+            postData,
+            {
+                observe: 'response'
+            }
         ).subscribe({
-            next: (responseData) => console.log(responseData),
+            next: (responseData) => {
+                console.log(responseData);
+                console.log(responseData.body);
+            },
             error: (error) => this.error.next(error),
             //complete: () => console.info('complete') 
         });
@@ -37,7 +43,8 @@ export class PostService{
                 headers: new HttpHeaders({
                     "Custom-Header": "hello"
                 }),
-                params: searchParams
+                params: searchParams,
+                responseType: 'json'
             }
         )
         .pipe(
@@ -58,6 +65,19 @@ export class PostService{
     }
 
     deletePosts() {
-        return this.http.delete('https://angularstudy-bdaae-default-rtdb.europe-west1.firebasedatabase.app/posts.json');
+        return this.http.delete('https://angularstudy-bdaae-default-rtdb.europe-west1.firebasedatabase.app/posts.json',
+            {
+                observe: 'events',
+                responseType: 'json'
+            }
+        ).pipe(tap(event => {
+            console.log(event);
+            if(event.type === HttpEventType.Sent) {
+                // ...
+            }
+            if(event.type === HttpEventType.Response) {
+                console.log(event.body);
+            }
+        }));
     }
 }
