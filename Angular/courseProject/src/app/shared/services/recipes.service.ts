@@ -8,7 +8,7 @@ import { ShoppingListService } from "./shopping-list.service";
 export class RecipesService {
     recipesChanged = new Subject<Recipe[]>();
 
-    private recipes: Recipe[] = [
+    /*private recipes: Recipe[] = [
         new Recipe("A test recipe","This is simple a test","https://images.immediate.co.uk/production/volatile/sites/30/2020/08/chorizo-mozarella-gnocchi-bake-cropped-9ab73a3.jpg",
         [
             new Ingredient("Meat",1),
@@ -19,7 +19,9 @@ export class RecipesService {
             new Ingredient("Buns",2),
             new Ingredient("Meat", 1)    
         ])
-    ];
+    ];*/
+
+    private recipes: Recipe[] = [];
 
     constructor(
         private shoppingListService: ShoppingListService
@@ -35,6 +37,16 @@ export class RecipesService {
 
     getRecipe(id: number) {
         return this.recipes[id];
+    }
+
+    getRecipeFromInputList(id:number, recipes: Recipe[]) {
+        this.recipes = recipes;
+        return this.getRecipe(id);
+    }
+
+    addRecipes(recipes: Recipe[]) {
+        this.recipes = recipes;
+        this.recipesChanged.next(this.recipes.slice());
     }
 
     addRecipe(recipe: Recipe) {
