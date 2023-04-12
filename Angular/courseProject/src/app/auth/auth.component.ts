@@ -1,8 +1,10 @@
-import { Component } from "@angular/core";
+import { Component, ComponentFactoryResolver, ViewChild } from "@angular/core";
 import { NgForm } from "@angular/forms";
 import { AuthResponseData, AuthService } from "./auth.service";
 import { Observable } from "rxjs";
 import { Router } from "@angular/router";
+import { AlertComponent } from '../shared/alert/alert.component'
+import { PlaceHolderDirective } from "../shared/placeholder/placeholder.directive";
 
 @Component({
     selector: 'app-auth',
@@ -12,10 +14,11 @@ export class AuthComponent {
     isLoginMode = true;
     isLoading = false;
     error: string = null;
+    @ViewChild(PlaceHolderDirective, {static: false}) alertHost: PlaceHolderDirective; //Find the 1st occurence of this directive
 
     constructor(
         private authService: AuthService,
-        private router: Router
+        private router: Router,
     ) {}
 
     onSwitchMode() {
@@ -49,6 +52,7 @@ export class AuthComponent {
             error: (errorMessage) => {
                 this.isLoading=false;
                 console.log(errorMessage);
+                this.showErrorAlert(errorMessage);
                 this.error = errorMessage;
             },
             complete() {
@@ -58,5 +62,16 @@ export class AuthComponent {
 
         form.reset();
         
+    }
+
+    onHandlerError() {
+        this.error = null;
+    }
+
+    private showErrorAlert(message: string) {
+        const hostViewContainerRef = this.alertHost.viewContainerRef;
+        hostViewContainerRef.clear();
+        
+        hostViewContainerRef.createComponent<AlertComponent>(AlertComponent);
     }
 }
