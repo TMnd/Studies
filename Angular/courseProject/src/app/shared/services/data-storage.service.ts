@@ -3,7 +3,8 @@ import { Injectable } from "@angular/core";
 import { exhaustMap, map, take, tap } from "rxjs/operators";
 import { AuthService } from "src/app/auth/auth.service";
 import { Recipe } from "src/app/components/recipes/recipe.model";
-import { RecipesService } from "./recipes.service";
+import { RecipesService } from "src/app/components/recipes/recipes.service";
+
 
 @Injectable({providedIn: "root"})
 export class DataStorageService {

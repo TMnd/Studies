@@ -1,9 +1,8 @@
 import { Injectable } from "@angular/core";
 import { Subject } from "rxjs";
 import { Recipe } from "src/app/components/recipes/recipe.model";
-import { Ingredient } from "../ingredient.model";
-import { ShoppingListService } from "./shopping-list.service";
-
+import { Ingredient } from "src/app/shared/ingredient.model";
+import { ShoppingListService } from "src/app/components/shopping-list/shopping-list.service";
 @Injectable()
 export class RecipesService {
     recipesChanged = new Subject<Recipe[]>();

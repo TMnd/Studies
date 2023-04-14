@@ -2,8 +2,8 @@ import { Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from "@angular/router";
 import { Observable } from "rxjs";
 import { DataStorageService } from "src/app/shared/services/data-storage.service";
-import { RecipesService } from "src/app/shared/services/recipes.service";
 import { Recipe } from "./recipe.model";
+import { RecipesService } from "./recipes.service";
 
 @Injectable({providedIn: "root"})
 export class RecipeResolverService implements Resolve<Recipe[]> {
