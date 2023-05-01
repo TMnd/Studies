@@ -1,8 +1,9 @@
 import { OnDestroy, OnInit } from '@angular/core';
 import { Component } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Ingredient } from 'src/app/shared/ingredient.model';
 import { ShoppingListService } from './shopping-list.service';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-shopping-list',
@@ -10,18 +11,21 @@ import { ShoppingListService } from './shopping-list.service';
   styleUrls: ['./shopping-list.component.css']
 })
 export class ShoppingListComponent implements OnInit, OnDestroy{
-  ingredients: Ingredient[];
+  ingredients: Observable<{ingredients: Ingredient[]}>; //In hte html is necessary a pipe, ex: *ngFor="let ingredient of (ingredients | async ).ingredients; let i = index"
   private subscription: Subscription;
   
   constructor(
-    private shoppingListService: ShoppingListService
+    private shoppingListService: ShoppingListService,
+    private store: Store<{ shoppingList: { ingredients: Ingredient[] } }>
   ){}
 
   ngOnInit() {
-    this.ingredients = this.shoppingListService.getIngredients();
-    this.subscription = this.shoppingListService.ingredientsChanged.subscribe((ingredients: Ingredient[]) => {
-      this.ingredients = ingredients;
-    })
+    this.ingredients = this.store.select('shoppingList');
+    
+    // this.ingredients = this.shoppingListService.getIngredients();
+    // this.subscription = this.shoppingListService.ingredientsChanged.subscribe((ingredients: Ingredient[]) => {
+    //   this.ingredients = ingredients;
+    // })
   }
 
   onEditItem(index: number) {
