@@ -12,7 +12,7 @@ import { RecipesService } from './components/recipes/recipes.service';
 import { SharedModule } from './shared/shared.module';
 
 import { StoreModule } from '@ngrx/store';
-import { shoppingListReducer } from './components/shopping-list/store/shopping-list.reducer';
+import * as fromApp from './store/app.reducer';
 
 @NgModule({
   declarations: [
@@ -24,7 +24,7 @@ import { shoppingListReducer } from './components/shopping-list/store/shopping-l
     AppRoutingModule,
     HttpClientModule,
     SharedModule,
-    StoreModule.forRoot({shoppingList: shoppingListReducer})
+    StoreModule.forRoot(fromApp.appReducer)
   ],
   providers: [
     RecipesService,
