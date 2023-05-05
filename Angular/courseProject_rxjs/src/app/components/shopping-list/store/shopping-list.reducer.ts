@@ -70,7 +70,7 @@ export function shoppingListReducer(
         case ShoppingListActions.STOP_EDIT:
             return {
                 ...state,
-                editedIngredient: -1
+                editedIngredientIndex: -1
             };
         default:
             return state;
