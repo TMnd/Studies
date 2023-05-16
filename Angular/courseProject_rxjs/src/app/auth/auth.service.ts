@@ -55,50 +55,9 @@ export class AuthService {
         }));
     }
 
-    autoLogin() {
-        const userData:{
-            email: string;
-            id: string;
-            _token: string;
-            _tokenExpirationDate: string;
-        } = JSON.parse(localStorage.getItem('userData'));
-        if(!userData) {
-            return;
-        }
-        
-        const loadedUser = new User(
-            userData.email, 
-            userData.id, 
-            userData._token, 
-            new Date(userData._tokenExpirationDate)
-        );
-
-        if(loadedUser.token) {
-            //this.user.next(loadedUser);
-            this.store.dispatch(new AuthAction.Login({
-                email: loadedUser.email, 
-                userId: loadedUser.id, 
-                token: loadedUser.token,
-                expirationDate: new Date(userData._tokenExpirationDate)
-            }))
-            const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime(); 
-            this.autoLogout(expirationDuration);
-        }
-    }
-
-    logout() {
-        //this.user.next(null);
-        this.store.dispatch(new AuthAction.Logout());
-        this.router.navigate(['/auth'])
-        localStorage.removeItem('userData');
-        if(this.tokenExpirationTimeout) {
-            clearTimeout(this.tokenExpirationTimeout);
-        }
-    }
-
     autoLogout(expirationDuration: number) {
         this.tokenExpirationTimeout = setTimeout(() => {
-            this.logout();
+            this.store.dispatch(new AuthAction.Logout());
         }, expirationDuration);
     }
 
@@ -107,7 +66,7 @@ export class AuthService {
         const user = new User(email, userId, token, expirationDate);
         //this.user.next(user);
         this.store.dispatch(
-            new AuthAction.Login({
+            new AuthAction.AuthenticateSuccess({
                 email: email,
                 userId: userId,
                 token: token,
