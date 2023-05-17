@@ -10,6 +10,7 @@ import { AuthService } from './auth/auth.service';
 import { AuthInterceptorService } from './auth/auth-intercetor.service';
 import { RecipesService } from './components/recipes/recipes.service';
 import { SharedModule } from './shared/shared.module';
+import { StoreRouterConnectingModule } from '@ngrx/router-store'; 
 
 import { StoreModule } from '@ngrx/store';
 import * as fromApp from './store/app.reducer';
@@ -26,6 +27,7 @@ import { AuthEffects } from './auth/store/auth.effects';
     AppRoutingModule,
     HttpClientModule,
     StoreModule.forRoot(fromApp.appReducer),
+    StoreRouterConnectingModule.forRoot(),
     EffectsModule.forRoot([AuthEffects]),
     SharedModule
   ],
