@@ -1,17 +1,18 @@
-import { HttpClient, HttpParams } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { exhaustMap, map, take, tap } from "rxjs/operators";
-import { AuthService } from "src/app/auth/auth.service";
+import { map, tap } from "rxjs/operators";
 import { Recipe } from "src/app/components/recipes/recipe.model";
 import { RecipesService } from "src/app/components/recipes/recipes.service";
-
+import * as fromApp from '../../store/app.reducer';
+import { Store } from "@ngrx/store";
+import * as RecipesActions from '../../components/recipes/store/recipe.actions';
 
 @Injectable({providedIn: "root"})
 export class DataStorageService {
     constructor(
         private http: HttpClient,
         private recipeService: RecipesService,
-        private authService: AuthService
+        private store: Store<fromApp.AppState>
     ) {}
 
     storeRecipes() {
@@ -36,7 +37,8 @@ export class DataStorageService {
                 });
             }),
             tap(recipes => {
-                this.recipeService.addRecipes(recipes);
+                // this.recipeService.addRecipes(recipes);
+                this.store.dispatch(new RecipesActions.setRecipes(recipes));
             })
         );
         //Only take 1 value from observable and unsubscribe

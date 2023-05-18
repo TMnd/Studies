@@ -1,8 +1,11 @@
 import { OnInit } from '@angular/core';
 import { Component } from '@angular/core';
-import { ActivatedRoute, ActivatedRouteSnapshot, Data, Params, Router } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Recipe } from '../recipe.model';
 import { RecipesService } from '../recipes.service';
+import * as fromApp from '../../../store/app.reducer';
+import { Store } from '@ngrx/store';
+import { map, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-recipe-detail',
@@ -11,26 +14,34 @@ import { RecipesService } from '../recipes.service';
 })
 export class RecipeDetailComponent implements OnInit{
   recipe: Recipe;
+  id: number;
 
   constructor(
     private recipeService: RecipesService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private store: Store<fromApp.AppState>
   ){}
 
   ngOnInit(): void {
-    this.route.params.subscribe(
-      (params: Params) => {
-        const id = params['id'];
-        this.recipe = this.recipeService.getRecipe(id);
+    this.route.params
+    .pipe(
+      map(params => {
+        return +params['id'];
+      }),
+      switchMap (id => {
+        this.id = id;
+        return this.store.select('recipes')
+      }),
+      map(recipeState => {
+        return recipeState.recipes.find((recipe, index) => {
+          return index === this.id;
+        });
       }
-    );
-    // this.route.data.subscribe(
-    //   (data: Data) => {
-    //     console.log(data);
-    //     this.recipe = data['recipeDetail']
-    //   }
-    // );
+    ))
+    .subscribe(recipe => {
+      this.recipe = recipe;
+    })
   }
 
   toShoppingList(){
