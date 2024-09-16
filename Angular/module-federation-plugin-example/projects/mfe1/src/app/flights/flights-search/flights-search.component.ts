@@ -1,4 +1,4 @@
-import {Component, Inject} from '@angular/core';
+import {Component, inject,} from '@angular/core';
 import { AuthLibService } from 'auth-lib';
 
 @Component({
@@ -8,13 +8,12 @@ import { AuthLibService } from 'auth-lib';
 })
 export class FlightsSearchComponent {
 
-  private service = Inject(AuthLibService);
+  private service = inject(AuthLibService);
 
+  user=  this.service.user;
   // Add this:
-  user = this.service.user;
-
   // And add that:
-  constructor() { }
+  constructor() {}
 
   search(): void {
     alert('Not implemented for this demo!');

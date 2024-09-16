@@ -9,7 +9,9 @@ export class AppComponent {
   title = 'shell';
 
   constructor(private service: AuthLibService) {
+    console.log("---");
     this.service.login('Max', null);
+    console.log(this.service.user);
   }
 }
 
